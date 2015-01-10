@@ -1,3 +1,7 @@
+#
+# Script for patching Novatouch TKL firmware. Will switch the caps
+# lock key to ctrl and change places of backspace and \.
+#
 import md5
 import argparse
 
@@ -61,7 +65,7 @@ scancode_table2 = [0x00, 0x35, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23,
 key_id_ctrl = 17
 key_id_caps = 20
 key_id_backspace = 112
-key_id_backslash = 108
+key_id_backslash = 117
 
 # Hex offsets to scancode tables in the raw original fw. These tables
 # will be overwritten by our modified tables above
@@ -93,6 +97,16 @@ def original_fw_valid(path):
         m = md5.new()
         m.update(orig.read())
         return m.hexdigest() == orig_fw_md5
+
+def write_jump_to_bsl():
+    '''Make fn + F1 + F4 jump to BSL (firmware update mode)'''
+    # Replace mov instruction with a call to our own code for checking
+    # which F keys are currently pressed. If fn + F1 + F4 is pressed
+    # jump to 0x1000 (BSL entry addr).
+
+    # bytecode for asm 'call 0xa780; nop'
+    dest.seek(0x83a)
+    dest.write('b01280a70343'.decode('hex'))
 
 if __name__ == '__main__':
     # Remap caps to ctrl
@@ -126,3 +140,5 @@ if __name__ == '__main__':
             dest.seek(string_table_offset)
             for text in usb_hid_strings:
                 write_usb_string(dest, text)
+
+            write_jump_to_bsl()

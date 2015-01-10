@@ -31,9 +31,14 @@ main.o: section_data_patch.bin section_isr.bin
 	--change-section-address .vectors=0xff80 \
 	--set-start 0x8000 section_data_patch.bin $@
 
+build/enter_bsl.o: shellcode/enter_bsl.c
+	@echo "Compiling shellcode..."
+	$(QUIET)msp430-gcc -Os -mmcu=msp430f5510 -c $< -o $@
+
 # The main.o is an relocatable elf which we convert to an actual elf
-# for IDA to like it
-main.elf: main.o
+# for IDA to like it. Also link in our own objects
+main.elf: build/main.o enter_bsl.o
+	@echo "Create main.elf..."
 	$(QUIET)msp430-gcc -O0 -mmcu=msp430f5510 \
 	-Wl,--section-start=.text=0x8000 \
 	-Wl,--entry=0x9ca6 \
