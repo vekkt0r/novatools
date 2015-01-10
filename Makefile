@@ -45,5 +45,9 @@ main.elf: build/main.o enter_bsl.o
 	-nostdlib \
 	$< -o $@
 
+.PHONY: flash
+flash: main.elf
+	$(QUIET)mspdebug rf2500 "prog $<"
+
 clean:
 	rm *.o *.bin main.elf
