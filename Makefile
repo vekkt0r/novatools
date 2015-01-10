@@ -1,35 +1,38 @@
 all:
 
 QUIET=@
+
 orig_fw.hex:
 	@echo "Reading Novatouch firmware to $@..."
 	$(QUIET)mspdebug rf2500 "hexout 0x8000 0xffff $@"
 
-orig_fw.bin: orig_fw.hex
+build/orig_fw.bin: orig_fw.hex
 	@echo "Converting ihex fw to binary blob..."
+	$(QUIET)mkdir -p build
 	$(QUIET)msp430-objcopy -I ihex -O binary $< $@
 
-section_isr.bin: orig_fw.bin
+build/section_isr.bin: build/orig_fw.bin
 	@echo "Create isr vectors binary..."
-	$(QUIET)dd if=$< of=$@ bs=1 skip=0x7fe0 count=0x20
+	$(QUIET)dd if=$< of=$@ bs=1 skip=0x7fe0 count=0x20 2> /dev/null
 
-section_data.bin: orig_fw.bin
+build/section_data.bin: build/orig_fw.bin
 	@echo "Create data section binary..."
-	$(QUIET)dd if=$< of=$@ bs=1 count=0x2780
+	$(QUIET)dd if=$< of=$@ bs=1 count=0x2780 2> /dev/null
 
-section_data_patch.bin: section_data.bin
-	@echo "Patching firmware..."
-	$(QUIET)python patch.py section_data.bin section_data_patch.bin
+build/section_data_patch.bin: build/section_data.bin patch.py
+	@echo "Patching data section..."
+	$(QUIET)python patch.py $< $@
 
 # IDA friendly elf file
-main.o: section_data_patch.bin section_isr.bin
+build/main.o: build/section_data_patch.bin build/section_isr.bin
+	@echo "Create main.o..."
 	$(QUIET)msp430-objcopy -I binary -O elf32-msp430 -B msp430:430X \
-	--rename-section .data=.text,contents,code,alloc,load,readonly \
-	--change-section-address .data=0x8000 \
-	--add-section .vectors=section_isr.bin \
-	--set-section-flags .vectors=contents,alloc,load,readonly,code \
-	--change-section-address .vectors=0xff80 \
-	--set-start 0x8000 section_data_patch.bin $@
+		--rename-section .data=.text,contents,code,alloc,load,readonly \
+		--change-section-address .data=0x8000 \
+		--add-section .vectors=build/section_isr.bin \
+		--set-section-flags .vectors=contents,alloc,load,readonly,code \
+		--change-section-address .vectors=0xffe0 \
+		--set-start 0x8000 build/section_data_patch.bin $@
 
 build/enter_bsl.o: shellcode/enter_bsl.c
 	@echo "Compiling shellcode..."
@@ -37,13 +40,14 @@ build/enter_bsl.o: shellcode/enter_bsl.c
 
 # The main.o is an relocatable elf which we convert to an actual elf
 # for IDA to like it. Also link in our own objects
-main.elf: build/main.o enter_bsl.o
+main.elf: build/main.o build/enter_bsl.o
 	@echo "Create main.elf..."
 	$(QUIET)msp430-gcc -O0 -mmcu=msp430f5510 \
-	-Wl,--section-start=.text=0x8000 \
-	-Wl,--entry=0x9ca6 \
-	-nostdlib \
-	$< -o $@
+		-Wl,--section-start=.text=0x8000 \
+		-Wl,--section-start=.vectors=0xffe0 \
+		-Wl,--entry=0x9ca6 \
+		-nostdlib \
+		$^ -o $@
 
 .PHONY: flash
 flash: main.elf
