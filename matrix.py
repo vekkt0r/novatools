@@ -106,7 +106,7 @@ for row in range(0,8):
     for col in range(0,16):
         idx = row + (col << 3)
         if idx in matrix:
-            print '| %s\t' % matrix[idx],
+            print '| ~%s~\t' % matrix[idx],
         else:
             print '|  \t',
     print
