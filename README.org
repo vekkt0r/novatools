@@ -1,8 +1,8 @@
 * Novatools
 This is a collection of tools for reading, patching and flashing the
 Novatouch TKL firmware.
-* Disclaimer
-This is just a quick hack that has only by tested by me. It is very
+** Disclaimer
+This is just a quick hack that has only been tested by me. It is very
 dependant on a specific version of the firmware and if your keyboard
 has another firmware things will most probably break. The checksum of
 the original firmware will be checked before patching. If checksum
@@ -11,11 +11,11 @@ differs the patching will fail.
 It is possible you will brick your keyboard by using these tools.
 
 Make sure you store a copy of your original firmware safely.
-* Pre-requisites
+** Pre-requisites
 - MSP430 toolchain
 - mspdebug
 - Python
-* Hardware
+** Hardware
 Connect MSP430 programmer with Spy-Bi-Wire to the GNS, TEST, RST on
 the Novatouch programming connector (CN2):
 
@@ -30,7 +30,7 @@ the Novatouch programming connector (CN2):
        | +---------+ TEST  
        +-----------+ GND   
 #+end_src
-* Usage
+** Usage
 Connect Novatouch to programmer and run the ~make flash~ target:
 #+begin_src
 $ make flash
@@ -46,22 +46,22 @@ The patches done by default are:
 
 Flashing via BSL is not yet tested because the HID driver on OS X
 promptly refuses to recognize the keyboard when in that mode. "Should"
-work fine on Linux though :)
+work fine on Linux though :-)
 
 Edit the patch.py file to do other key mappings, hopefully it's
 understandable with the overly commented code.
-* Matrix
+** Matrix
 This a table representation of the actual key matrix. The row is the
 lowest 3 bits of key id and the column is the 4 bits above that
 (id = xCCCCRRR). I.e. ~tab = 5 + (2<<3) = 21~.
 #+ATTR_HTML: :border 2 :rules all :frame border
-|    | 0       | 1         | 2         | 3   | 4     | 5   | 6     | 7   | 8    | 9    | 10   | 11      | 12         | 13        | 14       | 15        |
-|----+---------+-----------+-----------+-----+-------+-----+-------+-----+------+------+------+---------+------------+-----------+----------+-----------|
-| 0: | ~2~     | ~1~       | ~tilde~   | ~3~ | ~f1~  | ~4~ | ~6~   | ~5~ | ~9~  | ~8~  | ~7~  | ~0~     | ~ins~      | ~-~       | ~bkspc~  | ~=~       |
-| 1: | ~alt_l~ | ~super_l~ | ~ctrl_l~  |     | ~esc~ |     | ~spc~ |     |      |      |      | ~alt_r~ | ~left~     | ~super_r~ | ~ctrl_r~ | ~fn~      |
-| 2: |         |           |           |     | ~f5~  |     |       |     | ~f8~ | ~f7~ | ~f6~ | ~f9~    | ~printscr~ | ~f10~     | ~f12~    | ~f11~     |
-| 3: | ~z~     |           | ~shift_l~ | ~x~ | ~f4~  | ~c~ | ~b~   | ~v~ | ,    | ~m~  | ~n~  | ~.~     |            | ~/~       | ~right~  | ~shift_r~ |
-| 4: | ~s~     | ~a~       | ~caps~    | ~d~ | ~f2~  | ~f~ | ~h~   | ~g~ | ~l~  | ~k~  | ~j~  | ~;~     |            | '         |          | ~ret~     |
-| 5: | ~w~     | ~q~       | ~tab~     | ~e~ | ~f3~  | ~r~ | ~y~   | ~t~ | ~o~  | ~i~  | ~u~  | ~p~     | ~del~      | ~[~       | ~\~      | ~]~       |
-| 6: |         |           |           |     |       |     |       |     |      |      |      |         |            | ~up~      | ~pause~  | ~pgup~    |
-| 7: |         |           |           |     |       |     |       |     |      |      |      |         | ~home~     | ~down~    | ~scroll~ | ~end~     |
+|         | 0     | 1       | 2       | 3 | 4   | 5 | 6   | 7 | 8  | 9  | 10 | 11    | 12       | 13      | 14     | 15      |
+|---------+-------+---------+---------+---+-----+---+-----+---+----+----+----+-------+----------+---------+--------+---------|
+|       0 | 2     | 1       | tilde   | 3 | f1  | 4 | 6   | 5 | 9  | 8  | 7  | 0     | ins      | -       | bkspc  | =       |
+|       1 | alt_l | super_l | ctrl_l  |   | esc |   | spc |   |    |    |    | alt_r | left     | super_r | ctrl_r | fn      |
+|       2 |       |         |         |   | f5  |   |     |   | f8 | f7 | f6 | f9    | printscr | f10     | f12    | f11     |
+|       3 | z     |         | shift_l | x | f4  | c | b   | v | ,  | m  | n  | .     |          | /       | right  | shift_r |
+|       4 | s     | a       | caps    | d | f2  | f | h   | g | l  | k  | j  | ;     |          | '       |        | ret     |
+|       5 | w     | q       | tab     | e | f3  | r | y   | t | o  | i  | u  | p     | del      | [       | \      | ]       |
+|       6 |       |         |         |   |     |   |     |   |    |    |    |       |          | up      | pause  | pgup    |
+|       7 |       |         |         |   |     |   |     |   |    |    |    |       | home     | down    | scroll | end     |

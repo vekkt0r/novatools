@@ -102,11 +102,11 @@ for col in range(0,16):
 print '\n|-'
 
 for row in range(0,8):
-    print '|%d:\t' % row,
+    print '|%d\t' % row,
     for col in range(0,16):
         idx = row + (col << 3)
         if idx in matrix:
-            print '| ~%s~\t' % matrix[idx],
+            print '| %s\t' % matrix[idx],
         else:
             print '|  \t',
     print
