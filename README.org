@@ -1,12 +1,16 @@
 * Novatools
 This is a collection of tools for reading, patching and flashing the
 Novatouch TKL firmware.
+
+See also [vekkt0r.github.io][1] for some more info about Novatouch keyboard reversing.
+
+[1]:http://vekkt0r.github.io/articles/novatouch-tkl-reverse-engineering-part-1/  
 ** Disclaimer
 This is just a quick hack that has only been tested by me. It is very
 dependant on a specific version of the firmware and if your keyboard
 has another firmware things will most probably break. The checksum of
 the original firmware will be checked before patching. If checksum
-differs the patching will fail.
+differs the patching will abort.
 
 It is possible you will brick your keyboard by using these tools.
 
