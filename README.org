@@ -2,9 +2,8 @@
 This is a collection of tools for reading, patching and flashing the
 Novatouch TKL firmware.
 
-See also [vekkt0r.github.io][1] for some more info about Novatouch keyboard reversing.
+See also [[http://vekkt0r.github.io/articles/novatouch-tkl-reverse-engineering-part-1/][vekkt0r.github.io]] for some more info about Novatouch keyboard reversing.
 
-[1]:http://vekkt0r.github.io/articles/novatouch-tkl-reverse-engineering-part-1/  
 ** Disclaimer
 This is just a quick hack that has only been tested by me. It is very
 dependant on a specific version of the firmware and if your keyboard
