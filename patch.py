@@ -40,7 +40,7 @@ scancode_table1 = [0x03, 0x3C, 0x00, 0x2E, 0x20, 0x12, 0x00, 0x00,
 # Before sending the scancode to host over usb the scancode from the
 # first table is used as index in a second table. Could as well remap
 # keys on this level but to really simulate the actual key it's better
-# to to it in scancode_table1. Only change this if you want to add new
+# to do it in scancode_table1. Only change this if you want to add new
 # scancodes.
 scancode_table2 = [0x00, 0x35, 0x1E, 0x1F, 0x20, 0x21, 0x22, 0x23,
                    0x24, 0x25, 0x26, 0x27, 0x2D, 0x2E, 0x00, 0x2A,
@@ -99,9 +99,9 @@ def original_fw_valid(path):
         return m.hexdigest() == orig_fw_md5
 
 def write_jump_to_bsl():
-    '''Make fn + F1 + F4 jump to BSL (firmware update mode)'''
+    '''Make fn + F1 + F2 jump to BSL (firmware update mode)'''
     # Replace mov instruction with a call to our own code for checking
-    # which F keys are currently pressed. If fn + F1 + F4 is pressed
+    # which F keys are currently pressed. If fn + F1 + F2 is pressed
     # jump to 0x1000 (BSL entry addr).
 
     # bytecode for asm 'call 0xa780; nop'
