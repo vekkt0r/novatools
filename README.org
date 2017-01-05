@@ -6,7 +6,7 @@ See also [[http://vekkt0r.github.io/articles/novatouch-tkl-reverse-engineering-p
 
 ** Disclaimer
 This is just a quick hack that has only been tested by me. It is very
-dependant on a specific version of the firmware and if your keyboard
+dependent on a specific version of the firmware and if your keyboard
 has another firmware things will most probably break. The checksum of
 the original firmware will be checked before patching. If checksum
 differs the patching will abort.
@@ -15,10 +15,21 @@ It is possible you will brick your keyboard by using these tools.
 
 Make sure you store a copy of your original firmware safely.
 ** Pre-requisites
+- Python2
 - MSP430 toolchain
-- mspdebug
-- Python
-** Hardware
+- mspdebug OR python-msp430-tools (depending on flash method)
+** Flashing
+The keyboard can be programmed in two ways:
+1. Use JTAG or Spy-Bi-Wire (SBW) programming interface and a MSP430
+   programmer (for example Launchpad).
+2. Use built-in bootstrap loader (BSL) to flash via USB.
+
+*** Flashing via JTAG / SBW
+This is the most secure way of programming the keyboard since it
+should always (if CM has not changed JTAG fuses lately) be possible to
+read out the original firwmware and verify it's the version the
+patches work against.
+
 Connect MSP430 programmer with Spy-Bi-Wire to the GNS, TEST, RST on
 the Novatouch programming connector (CN2):
 
@@ -33,10 +44,37 @@ the Novatouch programming connector (CN2):
        | +---------+ TEST  
        +-----------+ GND   
 #+end_src
+
+Not sure what the name is of the connector type on the keyboard, I
+just soldered wires to the pins on the backside of the connector.
+
+*** Flashing via USB BSL
+The MSP430F5510 has a built in bootstrap loader that can be used to
+flash via USB. To enter the bootloader the PUR pin of the MSP must be
+connected to VBUS during power up.
+
+With stable hands it should be possible to do this without any
+soldering.
+
+1. Disconnect keyboard from computer.
+2. Connect wire between pin 1 on CN1 and PUR pin on MSP (see [[http://vekkt0r.github.io/images/novatouch_pinout.png][this]]
+   image for exact locations].
+3. Connect keyboard to computer.
+4. Disconnect wire between PUR and VBUS.
+5. New USB device with VID 0x2047 / PID 0x0200 should show up on
+   computer, named "Texas Instruments MSP430 USB HID Bootstrap
+   Loader".
+
 ** Usage
 Connect Novatouch to programmer and run the ~make flash~ target:
 #+begin_src
 $ make flash
+#+end_src
+
+To flash with USB BSL first make sure the keyboard is in BSL mode (as
+per instructions above) and then run:
+#+begin_src
+make -f Makefile.bsl flash
 #+end_src
 
 This will fetch the original firmware (main flash only), do some
@@ -47,16 +85,18 @@ The patches done by default are:
 - Switch place of the 'backspace' and '\' keys
 - Add hook function for entering BSL (bootloader) mode with fn + F1 + F2
 
-Flashing via BSL is not yet tested because the HID driver on OS X
-promptly refuses to recognize the keyboard when in that mode. "Should"
-work fine on Linux though :-)
-
 Edit the patch.py file to do other key mappings, hopefully it's
 understandable with the overly commented code.
 ** Matrix
 This a table representation of the actual key matrix. The row is the
 lowest 3 bits of key id and the column is the 4 bits above that
-(id = xCCCCRRR). I.e. ~tab = 5 + (2<<3) = 21~.
+(id = xCCCCRRR). I.e. ~key_id = R + (C<<3)~, where R is the 0 indexed row
+from the table below and C is the 0 indexed column. For example ~tab =
+5 + (2<<3) = 21~.
+
+First row contains row id:s and first column is column id:s, rest of
+the table is the keys..
+
 #+ATTR_HTML: :border 2 :rules all :frame border
 |         | 0     | 1       | 2       | 3 | 4   | 5 | 6   | 7 | 8  | 9  | 10 | 11    | 12       | 13      | 14     | 15      |
 |---------+-------+---------+---------+---+-----+---+-----+---+----+----+----+-------+----------+---------+--------+---------|
