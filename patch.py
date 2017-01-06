@@ -99,9 +99,9 @@ def original_fw_valid(path):
         return m.hexdigest() == orig_fw_md5
 
 def write_jump_to_bsl():
-    '''Make fn + F1 + F2 jump to BSL (firmware update mode)'''
+    '''Make fn + F1 + F4 jump to BSL (firmware update mode)'''
     # Replace mov instruction with a call to our own code for checking
-    # which F keys are currently pressed. If fn + F1 + F2 is pressed
+    # which F keys are currently pressed. If fn + F1 + F4 is pressed
     # jump to 0x1000 (BSL entry addr).
 
     # bytecode for asm 'call 0xa780; nop'

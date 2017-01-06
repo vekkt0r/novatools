@@ -13,7 +13,7 @@ void check_bsl_enter() {
     *num_for_7x_c1 = *repeat_rate;
 
     // Enter BSL if fn + f1 + f4 is pressed
-    if (*repeat_flags & 0x9) {
+    if ((*repeat_flags & 0x9) == 0x09) {
         __dint();
         // Maybe need to slow down clock to 8 MHz also, not sure what
         // is configured by Novatouch fw

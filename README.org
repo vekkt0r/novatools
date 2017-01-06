@@ -84,7 +84,7 @@ patching, and then flash the patched firmware back to the Novatouch.
 The patches done by default are:
 - Replace caps-lock with ctrl
 - Switch place of the 'backspace' and \ keys
-- Add hook function for entering BSL (bootloader) mode with fn + F1 + F2
+- Add hook function for entering BSL (bootloader) mode with fn + F1 + F4
 
 Edit the patch.py file to do other key mappings, hopefully it's
 understandable with the overly commented code.
