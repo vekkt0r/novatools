@@ -2,4 +2,6 @@
 *.bin
 *.elf
 *.hex
+.DS_Store
+.vagrant/
 build/
