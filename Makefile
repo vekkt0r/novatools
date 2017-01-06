@@ -13,11 +13,11 @@ build/orig_fw.bin: orig_fw.hex
 
 build/section_isr.bin: build/orig_fw.bin
 	@echo "Create isr vectors binary..."
-	$(QUIET)dd if=$< of=$@ bs=1 skip=0x7fe0 count=0x20 2> /dev/null
+	$(QUIET)dd if=$< of=$@ bs=1 skip=32736 count=32 status=none
 
 build/section_data.bin: build/orig_fw.bin
 	@echo "Create data section binary..."
-	$(QUIET)dd if=$< of=$@ bs=1 count=0x2780 2> /dev/null
+	$(QUIET)dd if=$< of=$@ bs=1 count=10112 status=none
 
 build/section_data_patch.bin: build/section_data.bin patch.py
 	@echo "Patching data section..."
