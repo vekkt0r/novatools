@@ -58,7 +58,7 @@ soldering.
 
 1. Disconnect keyboard from computer.
 2. Connect wire between pin 1 on CN1 and PUR pin on MSP (see [[http://vekkt0r.github.io/images/novatouch_pinout.png][this]]
-   image for exact locations].
+   image for exact locations).
 3. Connect keyboard to computer.
 4. Disconnect wire between PUR and VBUS.
 5. New USB device with VID 0x2047 / PID 0x0200 should show up on
@@ -66,7 +66,8 @@ soldering.
    Loader".
 
 ** Usage
-Connect Novatouch to programmer and run the ~make flash~ target:
+To flash with a programmer connect keyboard (as per instructions
+above) and then run:
 #+begin_src
 $ make flash
 #+end_src
@@ -82,7 +83,7 @@ patching, and then flash the patched firmware back to the Novatouch.
 
 The patches done by default are:
 - Replace caps-lock with ctrl
-- Switch place of the 'backspace' and '\' keys
+- Switch place of the 'backspace' and \ keys
 - Add hook function for entering BSL (bootloader) mode with fn + F1 + F2
 
 Edit the patch.py file to do other key mappings, hopefully it's
