@@ -98,15 +98,17 @@ def original_fw_valid(path):
         m.update(orig.read())
         return m.hexdigest() == orig_fw_md5
 
-def write_jump_to_bsl():
-    '''Make fn + F1 + F4 jump to BSL (firmware update mode)'''
-    # Replace mov instruction with a call to our own code for checking
-    # which F keys are currently pressed. If fn + F1 + F4 is pressed
-    # jump to 0x1000 (BSL entry addr).
+def write_handle_fn_key_handler_hooks():
+    '''Add C hooks for doing stuff when fn + key(s) is pressed'''
 
-    # bytecode for asm 'call 0xa780; nop'
+    # bytecode for asm 'calla 0xa780; nop' (on_fn_key_down)
     dest.seek(0x83a)
-    dest.write('b01280a70343'.decode('hex'))
+    dest.write('b01380a70343'.decode('hex'))
+
+    # calla #0xa8f0 (on_fn_key_up, INCREDIHACK: offest depends on size
+    # of on_fn_key_down since this is linked after)
+    dest.seek(0xa98)
+    dest.write('b01302a8'.decode('hex'))
 
 if __name__ == '__main__':
     # Remap caps to ctrl
@@ -141,4 +143,4 @@ if __name__ == '__main__':
             for text in usb_hid_strings:
                 write_usb_string(dest, text)
 
-            write_jump_to_bsl()
+            write_handle_fn_key_handler_hooks()
